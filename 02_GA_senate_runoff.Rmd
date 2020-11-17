@@ -1,0 +1,215 @@
+---
+title: "TV ads in Georgia Senate Runoffs"
+author: "Your name here"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+library(lubridate)
+library(janitor)
+library(scales)
+library(gt)
+library(kableExtra)
+options(dplyr.summarise.inform = FALSE)
+
+
+#load data
+ga_runoff_tvads <- readRDS("ga_runoff_ads.rds")
+
+
+```
+
+####
+### *Totals*
+
+```{r, echo=FALSE}
+
+ga_runoff_tvads %>% 
+  group_by(advertiser_party) %>% 
+  summarise(ads_aired = n()) %>%
+  arrange(desc(ads_aired)) %>% 
+  gt() %>%
+  # tab_options(table.align = "left") %>%
+  cols_align(
+    align = "right",
+    columns = vars(ads_aired)
+  ) %>% 
+  fmt_number(
+    columns = vars(ads_aired),
+    decimals = 0,
+    use_seps = TRUE
+  ) %>% 
+   tab_header(
+    title = md("Ads Aired by **Party**"),
+    subtitle = "(From Nov. 4th)"
+  )
+
+```
+
+####
+```{r, echo=FALSE}
+
+ga_runoff_tvads %>% 
+  group_by(election, advertiser_party, advertiser) %>% 
+  summarise(ads_aired = n()) %>%
+  arrange(desc(ads_aired)) %>% 
+  gt(rowname_col = "election", groupname_col = "advertiser_party") %>%
+  # tab_options(table.align = "left") %>% 
+  cols_align(
+    align = "right",
+    columns = vars(ads_aired)
+  ) %>% 
+  fmt_number(
+    columns = vars(ads_aired),
+    decimals = 0,
+    use_seps = TRUE
+  ) %>% 
+   tab_header(
+    title = md("Ads Aired by **Candidate/Group**"),
+    subtitle = "(From Nov. 4th)"
+  )
+
+```
+
+
+####
+### *Daily Totals*
+
+ggplot version of by party 
+```{r, echo=FALSE}
+
+dailycount_byparty <- ga_runoff_tvads %>% 
+  count(airdate, advertiser_party, name = "ad_count")
+
+#area chart by party
+ggplot(dailycount_byparty, aes(x = airdate, y = ad_count)) + 
+  geom_col(aes(color = advertiser_party, fill = advertiser_party), 
+            alpha = 0.5) +
+  scale_color_manual(values = c("#00AFBB", "#F2785D")) +
+  scale_fill_manual(values = c("#00AFBB", "#F2785D")) +
+  labs(title = "Daily Count of Ad Spots, By Party", 
+       subtitle = "",
+       x = "",
+       y = "") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_y_continuous(labels = comma)
+
+
+```
+
+
+####
+```{r, echo=FALSE}
+
+dailycount_bycand <- ga_runoff_tvads %>% 
+  count(airdate, advertiser, name = "ad_count")
+
+#bar chart for CANDIDATES
+ggplot(dailycount_bycand, aes(x = airdate, y = ad_count)) + 
+  geom_col(aes(color = advertiser, fill = advertiser), 
+           alpha = 0.5, position = position_dodge(preserve = "single")) +
+  scale_color_manual(values = c("#DC3A3A", "#4BAFD8", "#E8857E", "#2E90B8")) +
+  scale_fill_manual(values = c("#DC3A3A", "#4BAFD8", "#E8857E", "#2E90B8")) +
+  labs(title = "Daily Count of Ad Spots, By Candidate", 
+       subtitle = "",
+       x = "",
+       y = "") +
+  theme_minimal() +
+  theme(plot.title = element_text(hjust = 0.5)) +
+  scale_y_continuous(labels = comma)
+
+
+```
+
+
+
+
+##
+### *Tone*
+```{r, echo=FALSE}
+ga_runoff_tvads %>% 
+  count(advertiser_party, tone, name = "ads_aired") %>% 
+  gt() %>%
+  # tab_options(table.align = "left") %>% 
+  cols_align(
+    align = "right",
+    columns = vars(ads_aired)
+  ) %>% 
+  fmt_number(
+    columns = vars(ads_aired),
+    decimals = 0,
+    use_seps = TRUE
+  ) %>% 
+   tab_header(
+    title = md("Ad Tone by **Party**"),
+    subtitle = "(From Nov. 4th)"
+  )
+
+
+
+```
+
+####
+
+```{r, echo=FALSE}
+
+ga_runoff_tvads %>% 
+  group_by(advertiser_party, advertiser, tone) %>% 
+  summarise(ads_aired = n()) %>%
+  gt(rowname_col = "election", groupname_col = "advertiser_party") %>%
+  # tab_options(table.align = "left") %>% 
+  cols_align(
+    align = "right",
+    columns = vars(ads_aired)
+  ) %>% 
+  fmt_number(
+    columns = vars(ads_aired),
+    decimals = 0,
+    use_seps = TRUE
+  ) %>% 
+   tab_header(
+    title = md("Ad Tone by **Candidate/Group**"),
+    subtitle = "(From Nov. 4th)"
+  )
+
+```
+
+
+##
+### *Favorite Shows*
+```{r, echo=FALSE}
+
+ga_runoff_tvads %>% 
+  group_by(program_name) %>% 
+  summarise(ads_aired = n()) %>%
+  arrange(desc(ads_aired)) %>% 
+  head(10) %>% 
+  gt() %>%
+  # tab_options(table.align = "left") %>% 
+  cols_align(
+    align = "right",
+    columns = vars(ads_aired)
+  ) %>% 
+  fmt_number(
+    columns = vars(ads_aired),
+    decimals = 0,
+    use_seps = TRUE
+  ) %>% 
+  # fmt_currency(
+  #   columns = vars(est_spent),
+  #   decimals = 0,
+  #   currency = "USD"
+  # )  %>% 
+   tab_header(
+    title = md("Top Programs for Ad Airings"),
+    subtitle = "(From Nov. 4th)"
+  )
+
+
+```
+
