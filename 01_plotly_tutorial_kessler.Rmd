@@ -326,6 +326,7 @@ all_cities_plotlychart %>%
   add_lines(name = "Dallas")
 
 
+
 ```
 
 What if we want multiple cities to be highlighted? We can create a function to do it.
