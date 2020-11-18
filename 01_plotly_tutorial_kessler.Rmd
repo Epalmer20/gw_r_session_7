@@ -31,7 +31,9 @@ head(iris)
 Basic scatterplot
 ```{r, echo=FALSE}
 
-fig <- plot_ly(data = iris, x = ~Sepal.Length, y = ~Petal.Length)
+fig <- plot_ly(data = iris, 
+               x = ~Sepal.Length, 
+               y = ~Sepal.Width)
 
 fig 
 
@@ -41,13 +43,14 @@ Customising sizes
 
 ```{r, echo=FALSE}
 
-fig <- plot_ly(data = iris, x = ~Sepal.Length, y = ~Petal.Length,
+fig <- plot_ly(data = iris, 
+               x = ~Sepal.Length, 
+               y = ~Petal.Length,
                marker = list(size = 10,
                              color = 'blue',
                              line = list(color = 'green',
-                                         width = 2)))
-
-fig <- fig %>% layout(title = 'Customized Scatter Plot')
+                                         width = 2))) %>% 
+                layout(title = 'Customized Scatter Plot')
 
 fig
 
@@ -62,8 +65,15 @@ day <- c(1:30)
 number_of_order <- rnorm(30, mean = 3)
 df <- data.frame(day, number_of_order)
 
+
 # Data Visualization
-fig <- plot_ly(df, x = ~day, y = ~number_of_order, type = 'scatter', mode = 'lines')
+fig <- plot_ly(df, 
+               x = ~day, 
+               y = ~number_of_order, 
+               type = 'scatter', 
+               mode = 'lines')
+
+fig
 
 fig %>%  
   layout(title = 'Number of Daily Orders in a Month', 
@@ -72,6 +82,7 @@ fig %>%
                        
 
 ```
+
 
 Multiple line charts and styles
 ```{r, echo=FALSE}
@@ -87,21 +98,18 @@ df$month <- factor(df$month, levels = df[["month"]])
 
 #Data Visualization:
 
-fig <- plot_ly(data=df, x = ~month, y = ~Vegetable, name = 'Vegetable', 
+plot_ly(data=df, x = ~month, y = ~Vegetable, name = 'Vegetable', 
                type = 'scatter', mode = 'lines',
-               line = list(color = 'blue', width = 4))
-               
-fig <- fig %>% add_trace(y = ~Beverage, name = 'Beverage', 
-                         line = list(color = 'red', width = 4, dash = 'dot'))
-                         
-fig <- fig %>% add_trace(y = ~Snack, name = 'Snack', 
-                         line = list(color = 'green', width = 4, dash = 'dash'))
-                         
-fig <- fig %>% layout(title = "Average Sales by Parts of Supermarkets",
-         xaxis = list(title = "Months"),
-         yaxis = list (title = "Average Sales"))
+               line = list(color = 'blue', width = 4)) %>% 
+  add_trace(y = ~Beverage, name = 'Beverage', 
+               line = list(color = 'red', width = 4)) %>% 
+  add_trace(y = ~Snack, name = 'Snack', 
+                line = list(color = 'green', width = 4, dash = 'dash')) %>% 
+  layout(title = "Average Sales by Parts of Supermarkets",
+                xaxis = list(title = "Months"),
+                yaxis = list (title = "Average Sales"))
          
-fig
+
 
 ```
 
@@ -116,8 +124,8 @@ fig <- plot_ly(
   color = "orange"
 )
 fig <- fig %>% layout(title = "Sales by Parts of Supermarket",
-         xaxis = list(title = "Parts"),
-         yaxis = list (title = "Number of Sold Product"))
+               xaxis = list(title = "Parts"),
+               yaxis = list (title = "Number of Sold Product"))
 fig
 
 
@@ -199,7 +207,9 @@ new_df <- ggplot2::diamonds
 new_df_counted <- new_df %>% count(cut, clarity)
 
 #Data Visualization
-fig <- new_df_counted %>% plot_ly(x = ~cut, y = ~n, color = ~clarity)
+fig <- new_df_counted %>% plot_ly(x = ~cut, 
+                                  y = ~n, 
+                                  color = ~clarity)
 
 fig <- fig %>% layout(title = "Number of Clarity by Types and Cut")
 
@@ -217,14 +227,14 @@ df <- data.frame(Parts, Sales)
 #Data Visualisation
 fig <- df %>% plot_ly(labels = ~Parts, values = ~Sales)
 
-fig <- fig %>% add_pie(hole = 0.6)
+fig <- fig %>% add_pie(hole = 0.8)
 
 fig <- fig %>% layout(
                   title = "Number of Sales by Parts of Supermarket in a Day",  showlegend = F,
                   xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
                   yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE))
 
-
+fig
 ```
 
 ###
